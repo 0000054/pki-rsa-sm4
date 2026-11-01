@@ -1,0 +1,24 @@
+{
+  "name": "mini-pki-rsa-sm4",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A compact PKI course project demo using RSA certificates and SM4 encryption.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "multer": "^2.0.2",
+    "node-forge": "^1.3.1",
+    "sm-crypto": "^0.5.8"
+  },
+  "overrides": {
+    "qs": "^6.16.1"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}

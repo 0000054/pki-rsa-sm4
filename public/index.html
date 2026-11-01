@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mini PKI RSA/SM4 实验系统</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Crypto Engineering Lab</p>
+          <h1>Mini PKI RSA/SM4 实验系统</h1>
+          <p class="hero-copy">一个压缩版证书生命周期平台，覆盖申请、签发、吊销、CRL、RSA 签名验签和 SM4 文件加解密。</p>
+        </div>
+        <div class="metrics">
+          <article>
+            <span id="pendingCount">0</span>
+            <small>待审核</small>
+          </article>
+          <article>
+            <span id="issuedCount">0</span>
+            <small>有效证书</small>
+          </article>
+          <article>
+            <span id="revokedCount">0</span>
+            <small>已吊销</small>
+          </article>
+        </div>
+      </section>
+
+      <nav class="tabs" aria-label="功能模块">
+        <button class="tab active" data-tab="certs">证书管理</button>
+        <button class="tab" data-tab="sign">签名验签</button>
+        <button class="tab" data-tab="sm4">SM4 加解密</button>
+        <button class="tab" data-tab="audit">审计与 CRL</button>
+      </nav>
+
+      <section id="certs" class="panel active">
+        <div class="grid two">
+          <form id="requestForm" class="card">
+            <h2>提交证书申请</h2>
+            <label>
+              主体名称 CN
+              <input name="commonName" placeholder="例如：alice.pki.lab" required />
+            </label>
+            <label>
+              组织 O
+              <input name="organization" placeholder="例如：密码工程实验班" />
+            </label>
+            <label>
+              邮箱
+              <input name="email" type="email" placeholder="alice@example.com" />
+            </label>
+            <button type="submit">提交申请</button>
+          </form>
+
+          <section class="card">
+            <h2>根 CA 证书</h2>
+            <textarea id="caCert" readonly></textarea>
+          </section>
+        </div>
+
+        <section class="card wide">
+          <div class="section-head">
+            <h2>待审核申请</h2>
+            <button id="refreshRequests" type="button">刷新</button>
+          </div>
+          <div id="requestList" class="list"></div>
+        </section>
+
+        <section class="card wide">
+          <h2>证书列表</h2>
+          <div id="certList" class="list"></div>
+        </section>
+      </section>
+
+      <section id="sign" class="panel">
+        <div class="grid two">
+          <form id="signForm" class="card">
+            <h2>RSA 文件签名</h2>
+            <label>
+              选择证书
+              <select name="certificateId" class="certSelect"></select>
+            </label>
+            <label>
+              原始文件
+              <input name="file" type="file" required />
+            </label>
+            <button type="submit">生成签名</button>
+            <textarea id="signatureOutput" readonly placeholder="签名结果会显示在这里"></textarea>
+          </form>
+
+          <form id="verifyForm" class="card">
+            <h2>RSA 文件验签</h2>
+            <label>
+              选择证书
+              <select name="certificateId" class="certSelect"></select>
+            </label>
+            <label>
+              原始文件
+              <input name="file" type="file" required />
+            </label>
+            <label>
+              Base64 签名值
+              <textarea name="signature" required></textarea>
+            </label>
+            <button type="submit">验证签名</button>
+            <p id="verifyResult" class="result"></p>
+          </form>
+        </div>
+      </section>
+
+      <section id="sm4" class="panel">
+        <div class="grid two">
+          <form id="sm4EncryptForm" class="card">
+            <h2>SM4 文件加密</h2>
+            <label>
+              SM4 密钥 Hex
+              <input name="keyHex" id="sm4KeyInput" />
+            </label>
+            <label>
+              原始文件
+              <input name="file" type="file" required />
+            </label>
+            <button type="submit">加密文件</button>
+            <textarea id="cipherOutput" readonly placeholder="密文十六进制会显示在这里"></textarea>
+          </form>
+
+          <form id="sm4DecryptForm" class="card">
+            <h2>SM4 密文解密</h2>
+            <label>
+              SM4 密钥 Hex
+              <input name="keyHex" id="sm4DecryptKey" />
+            </label>
+            <label>
+              密文 Hex
+              <textarea name="encryptedHex" required></textarea>
+            </label>
+            <button type="submit">解密密文</button>
+            <textarea id="plainOutput" readonly placeholder="明文预览会显示在这里"></textarea>
+          </form>
+        </div>
+      </section>
+
+      <section id="audit" class="panel">
+        <div class="grid two">
+          <section class="card">
+            <div class="section-head">
+              <h2>CRL 吊销列表</h2>
+              <button id="loadCrl" type="button">加载 CRL</button>
+            </div>
+            <pre id="crlOutput"></pre>
+          </section>
+
+          <section class="card">
+            <h2>审计日志</h2>
+            <div id="auditList" class="audit-list"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" role="status"></div>
+    <script src="/app.js"></script>
+  </body>
+</html>
